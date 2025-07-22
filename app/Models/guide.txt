@@ -1,8 +1,10 @@
+=========================2-Migrations-Models=======================
 Trong models User có biến fillable gồm những trường trong danh sách white_list
 - Thêm sửa xóa các trường trong danh sách white_list tại đây, các trường còn lại sẽ là black_list
 - whitelist là ... blacklist là ...
 
 
+=========================3-Relationship============================
 ==============Cách setup các quan hệ cho các models đã tạo=========
 https://laravel.com/docs/12.x/eloquent-relationships#introduction
 
