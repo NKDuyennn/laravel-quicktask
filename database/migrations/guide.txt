@@ -1,0 +1,26 @@
+=======Tạo table/models mới
+---------Cách 1-----------------------
+- Xem các gợi ý câu lệnh
+php artisan make: --help;
+- Tạo table mới
+php artisan make:migration create_tasks_table --create=tasks
+
+---------Cách 2-----------------------
+- Xem gợi ý các câu lệnh
+php artisan make:model --help;
+- Tạo đồng thời migration task và model Task
+php artisan make:model Task -m 
+
+
+=======Update database với file migration đã chỉnh sửa========
+
+- Cần phải tạo 1 version mới cho bản user 
+php artisan make:migration update_users_table --table=users
+
+- Bổ sung các cột cần thêm vào hàm up() và tương tự drop ở hàng down
+- Tuy nhiên chưa có xóa cột name
+- Dùng php rollback để  quay lại trạng thái trước khi update bảng users
+php artisan migrate:rollback
+- Sau đó cập nhật các hàm up(), down() trong migration và chạy
+php artisan migrate
+- Có thể sử dụng thêm các câu lệnh migrate: khác
