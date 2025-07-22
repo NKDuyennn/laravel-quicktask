@@ -1,3 +1,62 @@
+=========================2-Migrations-Models=======================
 Trong models User có biến fillable gồm những trường trong danh sách white_list
 - Thêm sửa xóa các trường trong danh sách white_list tại đây, các trường còn lại sẽ là black_list
 - whitelist là ... blacklist là ...
+
+
+=========================3-Relationship============================
+==============Cách setup các quan hệ cho các models đã tạo=========
+https://laravel.com/docs/12.x/eloquent-relationships#introduction
+
+-------------------Quan hệ 1-n-----------------------------------
+- Setup các phương thức HasMany, BelongsTo xong trong models kiểm tra trong tinker
+php artisan tinker;
+User::first()->tasks()
+
+- Nếu muốn sử dụng 
+User::first()->tasks()
+- Cần phải cập nhật thêm file migrations thêm khóa ngoài cho bảng tasks
+
+-------------------Quan hệ n-n-----------------------------------
+- Tạo model và migration
+php artisan make:model -m Role
+- Setup các phương thức BelongsToMany trong 2 models
+- Thêm bảng role_user
+php artisan make:migration CreateRoleUserPivotTable 
+- Thêm các khóa ngoại vào bảng
+- Chạy migrate để cập nhật database
+php artisan migrate 
+- Chuyển sang tinker để kiểm tra quan hệ 
+php artisan tinker;
+User::first()->roles;
+User::first()->roles();
+- Sự khác nhau giữa roles lấy ra collection và roles() lấy ra quan hệ là như thế nào?
+- Taọ các quan hệ
+App\Models\Role::create(['name' => 'admin']);
+App\Models\Role::create(['name' => 'user']);
+- Thực hiện attach role_id
+User::first()->roles()->attach(1);
+User::first()->roles;
+User::first()->roles()->attach(2);
+User::first()->roles;
+
+- Thực hiện detach role_id gỡ ra role không dùng
+User::first()->roles()->detach(1);
+User::first()->roles;
+
+- Thực hiện toggle role_id để lật từ attach thành detach và ngược lại
+User::first()->roles()->toggle(2);
+User::first()->roles()->toggle(2);
+
+-----------------Optional một vài hàm khác---------------------
+User::first()->roles()->sync(2);
+
+---------------------------------------------------------------
+- Nếu muốn lấy ra các quan hệ 
+User::first()->roles()->first();
+User::first()->roles()->first()->pivot;
+
+- Nếu muốn lấy ra các trường khác ngoài user_id và role_id
+Thêm ->withTimestamps() vào function users và roles ở trong model
+Còn nếu muốn lấy thuộc tính khác thì dùng ->withPivot('Ten thuoc tinh')
+
