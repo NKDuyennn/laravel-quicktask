@@ -17,12 +17,24 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-    ];
+    
+    // fillable là biến chứa danh sách các trường trong white_list
+    // protected $fillable = [
+    //     'email',
+    //     'password',
+    //     'first_name',
+    //     'last_name',
+    //     'is_active',
+    //     'username',
+    // ];
 
+    // guarded là biến chứa danh sách các trường trong black_list
+
+    protected $guarded = [
+        // Các trường không được phép gán hàng loạt sẽ được liệt kê tại đây
+        // Ví dụ: 'admin_only_field',
+        'is_admin',
+    ];
     /**
      * The attributes that should be hidden for serialization.
      *

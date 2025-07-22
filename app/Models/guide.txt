@@ -1,0 +1,3 @@
+Trong models User có biến fillable gồm những trường trong danh sách white_list
+- Thêm sửa xóa các trường trong danh sách white_list tại đây, các trường còn lại sẽ là black_list
+- whitelist là ... blacklist là ...
