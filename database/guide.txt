@@ -1,0 +1,73 @@
+============================5-Seeder-Factory-Faker====================
+
+----------------------------5.1 Seeder--------------------------------
+- Công cụ dùng để gieo dữ liệu đầu vào cho database 
+- Thường dùng khi gieo dữ liệu admin hoặc chỉnh sửa dữ liệu đã có trước đó 
+- Tạo seeder 
+php artisan make:seeder --help
+php artisan make:seeder CreateInitialAdminAccount
+- Vào file seeder vừa tạo 
+- Import model cần dùng 
+- Viết các câu lệnh SQL theo nhu cầu 
+class CreateInitialAdminAccount extends Seeder
+{
+    /**
+     * Run the database seeds.
+     */
+    public function run(): void
+    {
+        User::unguard();
+
+        User::create([
+            'email' => 'admin.account@sun-asterisk.com',
+            'password' => bcrypt('admin123'), // Ensure to hash the password
+            'first_name' => 'Admin',
+            'last_name' => 'Account',
+            'is_active' => true, 
+            'username' => 'admin-account',
+            'is_admin' => true,
+        ]);
+    }
+}
+- Chạy seeder
+-- Gọi trong DatabaseSeeder
+class DatabaseSeeder extends Seeder
+{
+    /**
+     * Seed the application's database.
+     */
+    public function run(): void
+    {
+        
+
+        $this->call([
+            CreateInitialAdminAccount::class,
+        ]);
+    }
+}
+-- Sau đó chạy 
+php artisan db:seed;
+- Một vài kiến thức khác ....
+
+----------------------------5.2 Factory--------------------------------
+- Factory sử dụng trong tình huống cần gieo dữ liệu test, cần tạo ra hàng loạt dữ liệu
+- Xem các câu lệnh
+php artisan make:factory --help;
+- Tạo Factory cho model task
+php artisan make:factory TaskFactory --model="App\Models\Task";
+- Định nghĩa dữ liệu trong definition
+- Kết hợp với package Faker trong laravel để tạo dữ liệu giả
+- Sau khi setup xong mảng dữ liệu trong definition
+- Chạy vào tinker
+php artisan tinker;
+- Làm giả thông tin 
+User::factory()->make();
+- Nếu muốn lưu vào database 
+User::factory()->create();
+- Có thể truyền vào số lượng cho factory
+User::factory(3)->make();
+- Một vài kiến thức khác ....
+
+============================Quiz====================
+1. Seeder/Factory/Faker dùng để làm gì?
+2. Khi nào cần sử dụng Seeder? Khi nào nên sử dụng Factory?
