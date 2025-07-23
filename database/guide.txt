@@ -1,0 +1,51 @@
+============================5-Seeder-Factory-Faker====================
+
+----------------------------5.1 Seeder--------------------------------
+- Công cụ dùng để gieo dữ liệu đầu vào cho database 
+- Thường dùng khi gieo dữ liệu admin hoặc chỉnh sửa dữ liệu đã có trước đó 
+- Tạo seeder 
+php artisan make:seeder --help
+php artisan make:seeder CreateInitialAdminAccount
+- Vào file seeder vừa tạo 
+- Import model cần dùng 
+- Viết các câu lệnh SQL theo nhu cầu 
+class CreateInitialAdminAccount extends Seeder
+{
+    /**
+     * Run the database seeds.
+     */
+    public function run(): void
+    {
+        User::unguard();
+
+        User::create([
+            'email' => 'admin.account@sun-asterisk.com',
+            'password' => bcrypt('admin123'), // Ensure to hash the password
+            'first_name' => 'Admin',
+            'last_name' => 'Account',
+            'is_active' => true, 
+            'username' => 'admin-account',
+            'is_admin' => true,
+        ]);
+    }
+}
+- Chạy seeder
+-- Gọi trong DatabaseSeeder
+class DatabaseSeeder extends Seeder
+{
+    /**
+     * Seed the application's database.
+     */
+    public function run(): void
+    {
+        
+
+        $this->call([
+            CreateInitialAdminAccount::class,
+        ]);
+    }
+}
+-- Sau đó chạy 
+php artisan db:seed;
+
+----------------------------5.2 Factory--------------------------------
