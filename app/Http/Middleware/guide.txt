@@ -1,0 +1,40 @@
+====================7-Middleware===============================
+- Middleware là màng lọc nằm giữa client và server, khi người dùng gửi dữ liệu từ client sẽ đi qua middleware đến controller và ngược lại
+
+---------------------------Cách tạo middleware---------------------------
+php artisan make:middleware --help
+- Tạo middleware CheckAdmin
+php artisan make:middleware CheckAdmin;
+- Hàm handle trong middleware sẽ xử lý logic trong middleware
+- Vào Kernel.php xem middleware
+- Có 3 loại middle ware
+-- Global middleware Là middleware đi qua bất cứ request nào gửi lên server
+-- Group middleware nhóm middleware đi qua  các group routes được khai báo trong RouteServiceProvider.php, (Ví dụ như nhóm 'web'->'routes/web.php' và 'api'->'routes/api.php' (Nêu sự khác nhau)) 
+-- Alias middleware là middleware thêm riêng lẻ cho các request
+
+- Thực hiện thêm alias middleware vào Kernel.php
+'admin' => \App\Http\Middleware\CheckAdmin::class,
+- Setup logic cho CheckAdmin.php
+        $user = auth()->user();
+
+        if ($user && $user->is_admin) {
+            return $next($request);
+        }
+        
+        abort(401);
+Nếu user là admin thì chuyển request, còn không thì báo lỗi 
+- Sau đó thêm middleware vào route cụ thể  (Ví dụ ở đây thêm vào routes\web.php)
+Route::get('/users/create', [UserController::class, 'create'])
+    ->name('users.create')
+    ->middleware([
+        'admin',
+    ]);
+- Thử chạy với 2 trường hợp chưa đăng nhập và đã đăng nhập
+- Ở phần đã đăng nhập trong file routes\web.php thêm 
+Auth::loginUsingId(1);
+
+- Các kiến thức khác thường dùng
+
+==========================Quiz===================================
+1. Middleware dùng để làm gì?
+2. Phân biệt Global Middleware, Group Middleware và Route Middleware
