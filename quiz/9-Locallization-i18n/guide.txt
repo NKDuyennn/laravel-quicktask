@@ -1,0 +1,93 @@
+===================================9-Localization-i18n=============================
+- Localization là thiết lập giao diện theo ngôn ngữ của người dùng 
+- Để tạo file bản dịch có 2 cách https://laravel.com/docs/12.x/localization
+
+- Cách 1: Tạo thư mục lang 
+    php artisan lang:
+    hoặc php artisan lang:publish --help;
+    - Tạo thư mục dịch vi
+    - Có package lang trong laravel https://github.com/Laravel-Lang/lang/tree/main/locales/
+    - Tạo file vi.json trong thư mục lang/vi
+    - Trong file vi.json sẽ có các key và value tương ứng với bản dịch
+
+- Cách 2: Sử dụng package Laravel-Lang
+    - Package này sẽ cung cấp các bản dịch cho các ngôn ngữ khác nhau
+    - Vào git Laravel-Lang https://github.com/Laravel-Lang/lang
+    - Vào document ở phần README.md https://laravel-lang.com/packages-lang.html
+    - Làm theo phần Installation
+    --- B1: composer require laravel-lang/common --dev 
+    --- B2: php artisan lang:add vi
+    --- B3: php artisan lang:update
+
+    - Đã cài đặt xong sẽ có thư mục lang/vi và file vi.json
+    - Trong file vi.json sẽ có các key và value tương ứng với bản dịch
+
+- Cách sử dụng bản dịch
+- Tuy nhiên trong trang chủ chưa có nút chuyển ngôn ngữ
+-- Có thể vào config/app.php để thay đổi ngôn ngữ mặc định
+-- Hoặc có thể tạo một nút chuyển ngôn ngữ trong giao diện
+------ Tạo 1 controller
+php artisan make:controller LanguageController
+------ Trong controller này sẽ có 1 hàm để chuyển ngôn ngữ, tạo thêm session để ngôn ngữ này luôn đi theo người dùng
+class LanguageController extends Controller
+{
+    //
+    public function changeLanguage(Request $request, $language)
+    {
+        Session::put('lang', $language);
+
+        // Trở về trang trước đó
+        return redirect()->back();
+    }
+}
+------ Thực hiện chuyển ngữ khi có request đến middleware -> tạo middleware
+php artisan make:middleware Localization
+------ Trong middleware này sẽ kiểm tra session có ngôn ngữ hay không, nếu có thì sẽ set ngôn ngữ cho ứng dụng
+public function handle(Request $request, Closure $next): Response
+{
+    if (Session::get('lang')) {
+        App::setLocale(Session::get('lang'));
+    }
+    
+    return $next($request);
+}
+------ Đăng ký middleware này trong Kernel.php
+protected $middlewareAliases = [
+    'locale' => \App\Http\Middleware\Localization::class,
+];
+Tuy nhiên nếu muốn sử dụng middleware này cho tất cả các route thì cần đăng ký trong $middlewareGroups
+protected $middlewareGroups = [
+    'web' => [
+        \App\Http\Middleware\Localization::class,
+        // Các middleware khác...
+    ],
+]; 
+------ Thêm route cho controller này trong web.php
+Route::get('/locale/{lang}', [LanguageController::class, 'changeLanguage'])->name('locale');
+
+------ Chạy thử
+route: http://localhost:8000/locale/vi
+------ Có thể sử dụng __() để làm short hand cho việc lấy bản dịch
+Ví dụ: __('messages.welcome') sẽ lấy bản dịch của key 'welcome' trong file vi.json
+
+------ Cách tạo nút chuyển ngôn ngữ trong giao diện
+Trong file resources/views/layouts/navigation.blade.php
+<!-- Navigation Links -->
+    <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+        <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+            {{ __('Dashboard') }}
+        </x-nav-link>
+        <x-nav-link :href="route('locale', ['lang' => 'vi'])">
+            {{ __('VI') }}
+        </x-nav-link>
+        <x-nav-link :href="route('locale', ['lang' => 'en'])">
+            {{ __('EN') }}
+        </x-nav-link>
+    </div>
+
+==================================Quiz====================================
+1. Nêu cách truyền tham số vào bản dịch.
+2. Nêu cách thực hiện tạo bản dịch khác nhau cho số ít, số nhiều. (Mở rộng, Optional)
+Example: 
+singular: 1 comment.
+plural: n comments. 
