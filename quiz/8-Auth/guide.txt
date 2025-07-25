@@ -1,0 +1,32 @@
+==================================8-Auth=============================
+https://laravel.com/docs/11.x/starter-kits
+Các package như là Laravel Jetstream https://jetstream.laravel.com/introduction.html
+- Laravel Jetstream là package cho phép chúng ta cài đặt starter kit đầy đủ (Đăng nhập đăng xuất, đăng ký, chỉnh sửa profile, ....) có rất nhiều options và config mà người mới chưa hiểu hết được 
+(Starter kit là gì? )
+- Laravel Breeze là package nhẹ hơn, chỉ có những cái cơ bản nhất, rất dễ để cài đặt và chỉnh sửa cho người mới
+
+---------------------------_Cài đặt --------------------------------
+composer require laravel/breeze --dev 
+- Sau khi cài đặt trong composer.json có package mới
+- Sau khi cài đặt thì cần install để setup vào project 
+php artisan breeze:install --help
+(Mặc định sẽ là blade template , có nhiều options khác như react,vue,api)
+- Ví dụ dùng blade
+php artisan breeze:install blade --dark
+--------------------------- Config---------------------------------------------
+- Sau khi cài đặt xong sẽ thấy ở http://127.0.0.1:8000 hiện thêm 2 options login và register
+- Tất cả các login, logout, register, forgot pass, .... đều đã hoạt động và có cả phần logic BE
+- Tuy nhiên thì như bài trước đã sửa model database nên cần config lại logic phía backend của starter kit này để khớp với những phần đã setup
+- Cách để chỉnh sửa 
+-- Vào folder app\Http\Controllers\Auth
+-- B1: Sửa RegisterdUserController.php hàm validate và create cho khớp với database
+---- Lưu ý thêm User::unguard() trước hàm create vì trường is_admin được bảo vệ (Không khuyến nghị)
+            Thay vào đó có thể tạo 1 object user, gán từng thuộc tính vào object và save
+
+-- B2: Sửa form trong folder resources\views\auth 
+
+- Các kiến thức khác 
+
+=====================================Quiz==============================
+1. Bạn biết những starter kit Authentication nào của Laravel?
+2. Trong quicktask bạn sử dụng starter kit nào? Khi cần customize logic thì cần sửa ở đâu?
