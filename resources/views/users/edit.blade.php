@@ -30,6 +30,11 @@
                     {{ __('Edit') }}
                 </x-primary-button>
             </form>
+            <a href="{{ route('users.index') }}">
+                <x-primary-button class="mt-4">
+                    {{ __('Back') }}
+                </x-primary-button>
+            </a>
         </div>
     </div>
 </x-app-layout>
