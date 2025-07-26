@@ -1,0 +1,19 @@
+// Reset appearance để tránh cảnh báo
+input,
+select,
+textarea,
+button {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+// Import Bootstrap
+@import "bootstrap/scss/bootstrap";
+
+// Import Bootstrap Icons
+@import "bootstrap-icons/font/bootstrap-icons";
+
+// Import FontAwesome (nếu dùng @fortawesome/fontawesome-free)
+@import "@fortawesome/fontawesome-free/scss/fontawesome";
+@import "@fortawesome/fontawesome-free/scss/solid"; // nếu cần solid icons

@@ -1,0 +1,20 @@
+{
+  "name": "laravel-quicktask",
+  "description": "",
+  "main": "",
+  "authors": [
+    "NKDuyennn <kieuduyennn2310@gmail.com>"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/NKDuyennn/laravel-quicktask",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "template-bower-example": "https://github.com/NKDuyennn/template-bower-example.git"
+  }
+}
