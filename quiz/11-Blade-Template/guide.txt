@@ -1,0 +1,47 @@
+====================================11-Blade-Template===========================
+- Chỉnh sửa Blade Template để hiển thị danh sách User, các button CRUD 
+- Khi click vào 1 User thì hiển thị các đối tượng liên quan của model còn lại và các button CRUD tương ứng
+
+- Tạo folder resources/views/users
+- Tạo file index.blade.php trong folder resources/views/users
+- Sau đó sửa UserController.php để trả về view này
+    public function index()
+        {
+            return view('users.index', [
+                'users' => User::all(),
+            ]);
+        }
+- Sau đó sửa index.blade.php để hiển thị mẫu 1 user chưa lấy dữ liệu từ database
+- Thêm resources/scss/app.scss 
+- Sửa file resources/views/layouts/app.blade.php để include app.scss
+- Sửa vite.config.js để include app.scss
+- Chạy lệnh npm run dev để biên dịch lại file app.css
+- Chạy lệnh php artisan serve để chạy ứng dụng
+- Truy cập vào trang /users để xem danh sách User
+
+- Tiếp tục sửa file index.blade.php để hiển thị danh sách User
+- Sử dụng vòng lặp @foreach để lặp qua danh sách User
+- Hiển thị fullname và username của từng user
+- Thêm các button Edit, Delete cho từng User
+- Thêm button Create new user ở trên cùng (Tuy nhiên cần nhớ phải thêm bản dịch cho các button này trong file resources/lang/vi.json)
+
+- Tiếp theo là thêm file resources/views/users/edit.blade.php
+- Tạo form để chỉnh sửa User
+- Form này mới có trường fullname
+- Sửa file UserController.php để trả về view này
+    public function edit(User $user)
+    {
+        return view('users.edit', compact('user'));
+    }
+- Sửa file index.blade.php để thêm link đến trang chỉnh sửa User
+- Để gửi được dữ liệu edit lên thì phải thêm form vào trong file edit.blade.php
+- Với mọi form thì cần có token CSRF để bảo mật
+- Sau khi thêm form thì cần sửa lại UserController.php để xử lý việc cập nhật User
+- Sửa lại phương thức update trong UserController.php
+    public function update(Request $request, User $user)
+    {
+        $user->username = $request->name;
+        $user->save();
+        return redirect()->back();
+    }
+- Vậy là đã chỉnh sửa xong 
