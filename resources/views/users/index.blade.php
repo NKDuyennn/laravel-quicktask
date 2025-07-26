@@ -12,18 +12,22 @@
                     {{ __('User list') }}
                 </div>
             </div>
-            <x-primary-button class="mt-4">
-                {{ __('Create new user') }}
-            </x-primary-button>
+            <a href="{{ route('users.create') }}">
+                <x-primary-button class="mt-4">
+                    {{ __('Create new user') }}
+                </x-primary-button>
+            </a>
+            <!-- @dump($users) -->
             <table class="table">
-                <thread>
+                <thead>
                     <tr>
                         <th class="text-gray-900 dark:text-gray-100" scope="col">#</th>
                         <th class="text-gray-900 dark:text-gray-100" scope="col">Name</th>
                         <th class="text-gray-900 dark:text-gray-100" scope="col">Username</th>
+                        <th class="text-gray-900 dark:text-gray-100" scope="col">Tasks</th>
                         <th class="text-gray-900 dark:text-gray-100" scope="col">Actions</th>
                     </tr>
-                </thread>
+                </thead>
                 <tbody>
                     @foreach ($users as $index => $user)
                         <tr>
@@ -31,14 +35,33 @@
                             <td class="text-gray-900 dark:text-gray-100 text-center">{{ $user->fullname }}</td>
                             <td class="text-gray-900 dark:text-gray-100 text-center">{{ $user->username }}</td>
                             <td class="text-gray-900 dark:text-gray-100 text-center">
+                                @foreach ($user->tasks as $task)
+                                    {{ $task->name }}{{ !$loop->last ? ', ' : '' }}
+                                @endforeach
+                                <!-- @dump($user) -->
+                            </td>
+                            <td class="text-gray-900 dark:text-gray-100 text-center">
+                                <a href="{{ route('users.show', $user) }}">
+                                    <x-primary-button class="mt-4">
+                                        {{ __('View') }}
+                                    </x-primary-button>
+                                </a>
                                 <a href="{{ route('users.edit', $user) }}">
                                     <x-primary-button class="mt-4">
                                         {{ __('Edit') }}
                                     </x-primary-button>
                                 </a>
-                                <x-primary-button class="mt-4">
-                                    {{ __('Delete') }}
-                                </x-primary-button>
+                                <form method="POST" action="{{ route('users.destroy', $user) }}" 
+                                      id="delete-form-{{ $user->id }}" 
+                                      class="inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <x-primary-button type="button" 
+                                                    onclick="confirmDelete('{{ $user->id }}')" 
+                                                    class="mt-4">
+                                        {{ __('Delete') }}
+                                    </x-primary-button>
+                                </form>
                             </td>
                         </tr>
                     @endforeach
@@ -46,4 +69,12 @@
             </table>
         </div>
     </div>
+
+    <script>
+    function confirmDelete(userId) {
+        if (confirm('Are you sure you want to delete this user?')) {
+            document.getElementById('delete-form-' + userId).submit();
+        }
+    }
+    </script>
 </x-app-layout>
