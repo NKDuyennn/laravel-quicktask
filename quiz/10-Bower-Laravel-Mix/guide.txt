@@ -1,0 +1,108 @@
+================================10-Bower-Laravel-Mix================================
+- Cách để cài đặt package management Bower( vv) để cài đặt và apply các giao diện của các package vào Laravel Mix.
+- Hướng dẫn và cách sử dụng Bower https://viblo.asia/p/cach-su-dung-bower-quan-li-cac-package-trong-phat-trien-website-1Je5EOpjZnL
+- Hướng dẫn sử dụng Laravel Mix https://laravel.com/docs/8.x/mix
+- Hướng dẫn sử dụng Bower trong Laravel Mix https://laravel.com/docs/8
+
+- Cách cài đặt Bower:
+  - Cài đặt Bower thông qua npm: `npm install -g bower`
+
+- Đầu tiên là chọn package template có trên mạng (template có view danh sách ) 
+- Bắt đầu: chạy lệnh `bower init` để khởi tạo Bower trong dự án.
+    ? name laravel-quicktask
+    ? description 
+    ? main file 
+    ? keywords 
+    ? authors NKDuyennn <kieuduyennn2310@gmail.com>
+    ? license MIT
+    ? homepage https://github.com/NKDuyennn/laravel-quicktask
+    ? set currently installed components as dependencies? Yes
+    ? add commonly ignored files to ignore list? Yes
+    ? would you like to mark this package as private which prevents it from being accidentally published to th? would you like to mark this package as private which prevents it from being accidentally published to the registry? No
+
+    {
+    name: 'laravel-quicktask',
+    description: '',
+    main: '',
+    authors: [
+        'NKDuyennn <kieuduyennn2310@gmail.com>'
+    ],
+    license: 'MIT',
+    homepage: 'https://github.com/NKDuyennn/laravel-quicktask',
+    ignore: [
+        '**/.*',
+        'node_modules',
+        'bower_components',
+        'test',
+        'tests'
+    ]
+    }
+
+- Tiếp theo, cài đặt các package cần thiết bằng Bower. 
+    Ví dụ: cài đặt Bootstrap và jQuery:
+    - `bower install bootstrap jquery --save`
+    Ví dụ: cài đặt một package có trên mạng: 
+    - `bower install https://github.com/NKDuyennn/template-bower-example --save`
+    - Sau khi cài đặt, Bower sẽ tạo thư mục `bower_components` trong dự án, chứa các package đã cài đặt.
+    - Copy các file cần thiết từ `bower_components` vào thư mục giao diện của Laravel để có thể sử dụng trong ứng dụng.
+    - Ví dụ ở đây tôi copy file 'dashboard.blade.php' từ package đã cài đặt vào thư mục `resources/views/` của Laravel.
+    - Và ta đã có thể sử dụng giao diện của package này trong ứng dụng Laravel của mình.
+
+- Bên cạnh đó cần config .gitignore để loại bỏ thư mục bower_components khỏi việc theo dõi của git.
+    - Mở file `.gitignore` và thêm dòng sau:
+    ```
+    /bower_components
+    ```
+
+- Chuyển sang Laravel Mix để biên dịch các file CSS và JavaScript từ Bower.
+- Yêu cầu: Cài đặt và sử dụng công cụ compile tương ứng với phiên bản Laravel sử dụng. Yêu cầu: viết file css,js,scss,v.v.. vào folder resources/ và compile vào folder public/ sử dụng câu lệnh npm run dev.
+- Laravel Mix là một công cụ biên dịch tài nguyên frontend cho Laravel, giúp dễ dàng quản lý và biên dịch các file CSS, JavaScript, v.v.
+- Hướng dẫn sử dụng Laravel Mix: https://laravel.com/docs/8.x/m
+- Có thể sử dụng Laravel Mix hoặc Vite để biên dịch tài nguyên frontend trong Laravel.
+- Phần này sẽ hướng dẫn sử dụng Vite, vì Laravel Mix đã được thay thế bằng Vite trong các phiên bản mới của Laravel.
+- Vite là công cụ tổng hợp quản lý tất cả các file giao diện tối ưu hóa cho trình duyệt https://laravel.com/docs/12.x/vite
+- Vào vite.config.js 
+    - Thực hiện mix các file trong resources\ vào trong public\
+    - Tại sao? Vì vào trong folder public\ ta sẽ thấy các file được viết lại sao cho thân thiện với máy chủ và trình duyệt. Được tối ưu hóa và nén lại.
+    - Còn các file trong resources\ thân thiện với lập trình viên, dễ dàng chỉnh sửa và quản lý.
+    - Tuy nhiên vẫn có thể viết trực tiếp các file trong public\ nhưng không được khuyến khích vì sẽ khó quản lý và bảo trì.
+
+    - Ví dụ: Thêm file scss vào trong resources\ 
+    --- file scss resources\scss\app.scss
+    ```scss
+    @import "~bootstrap/scss/bootstrap";
+    @import "~bootstrap-icons/font/bootstrap-icons";
+    @import "~font-awesome/scss/font-awesome";  
+    ```
+    - Sau đó vào file vite.config.js để cấu hình Vite:
+    import { defineConfig } from 'vite';
+    import laravel from 'laravel-vite-plugin';
+
+    export default defineConfig({
+        plugins: [
+            laravel({
+                input: [
+                    'resources/css/app.css',
+                    'resources/js/app.js',
+                    'resources/scss/app.scss', // Thêm file scss vào đây
+                ],
+                refresh: true,
+            }),
+        ],
+    });
+    - Sau khi cấu hình xong, chạy lệnh `npm run dev` để biên dịch các file
+    - Lệnh này sẽ biên dịch các file trong `resources/` và tạo ra các file tương ứng trong `public/`, bao gồm cả file CSS và JavaScript đã được biên dịch từ SCSS và các package đã cài đặt qua Bower.
+    - Tuy nhiên lệnh `npm run dev` sẽ không tự động biên dịch các file SCSS, vì vậy cần phải cài đặt thêm package `sass` để hỗ trợ biên dịch SCSS.
+    - Cài đặt package `sass` bằng lệnh:
+    ```bash
+    npm install sass --save-dev
+    ``` 
+    - Sau khi cài đặt xong, chạy lại lệnh `npm run dev` để biên dịch các file SCSS.
+    - Tuy nhiên cần chạy 'npm run build' để biên dịch các file SCSS cho môi trường production.
+
+- Sau khi biên dịch xong, các file CSS và JavaScript sẽ được tạo ra trong thư mục `public/`, và có thể sử dụng trong ứng dụng Laravel.
+
+
+=========================================Quiz===============================================
+
+
