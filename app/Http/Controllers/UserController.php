@@ -6,7 +6,9 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash; 
 use Illuminate\Validation\Rules;
+use Exception;
 use DB;
+use Illuminate\Support\Facades\DB as FacadesDB;
 
 class UserController extends Controller
 {
@@ -114,10 +116,31 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      */
+    /*
     public function destroy(User $user)
     {
         // Eloquent ORM
         $user->delete();
         return redirect()->route('users.index');
+    }
+    */
+    public function destroy(User $user)
+    {
+        try {
+            DB::transaction(function () use ($user) {
+                // Xoa task cua user
+                $user->tasks()->delete();
+                // detach role cua user
+                $user->roles()->detach();
+                // Xoa user
+                $user->delete();
+            });
+            
+            return redirect()->route('users.index')
+                ->with('success', 'User deleted successfully.');
+        } catch (Exception $e) {
+            return redirect()->route('users.index')
+                ->with('error', 'Failed to delete user: ' . $e->getMessage());
+        }
     }
 }
