@@ -74,18 +74,26 @@
                                 </p>
                             </div>
 
+                            <!-- Su dung helpers -->
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                                     {{ __('Created At') }}
                                 </label>
-                                <p class="mt-1 text-sm text-gray-900 dark:text-gray-100">
-                                    {{ $user->created_at ? $user->created_at->format('d/m/Y H:i') : 'N/A' }}
-                                </p>
+                                <div class="mt-1 space-y-1">
+                                    <!-- Format d/m/Y H:i -->
+                                    <p class="text-sm text-gray-900 dark:text-gray-100">
+                                        <span class="font-medium">D/M/Y:</span> {{ formatDateDMYHIS($user->created_at) }}
+                                    </p>
+                                    <!-- Format Y/m/d H:i -->
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">
+                                        <span class="font-medium">Y/M/D:</span> {{ formatDateYMDHIS($user->created_at) }}
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Tasks Section -->
+                    <!-- Su dung helpers cho Tasks -->
                     @if($user->tasks && $user->tasks->count() > 0)
                     <div class="mb-6">
                         <h3 class="text-lg font-semibold mb-4">{{ __('User Tasks') }}</h3>
@@ -93,7 +101,12 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
                                 @foreach($user->tasks as $task)
                                     <div class="bg-white dark:bg-gray-600 rounded px-3 py-2 text-sm">
-                                        {{ $task->name }}
+                                        <div class="font-medium">{{ $task->name }}</div>
+                                        @if($task->created_at)
+                                            <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                                Tạo: {{ formatDateDMYHIS($task->created_at) }}
+                                            </div>
+                                        @endif
                                     </div>
                                 @endforeach
                             </div>
