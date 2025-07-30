@@ -1,0 +1,73 @@
+=========================================12-Eloquent ORM Query Builder========================================
+- Ví dụ về Eloquent ORM:
+public function update(Request $request, User $user)
+    {
+        //
+        $user->username = $request->name;
+        $user->save();
+        return redirect()->back();
+    }
+- Ví dụ về Query Builder:
+public function update(Request $request, User $user)
+    {
+        //
+        DB::table('users')->where('id', $user->id)
+            ->update(['username' => $request->name]);
+        return redirect()->back();
+    }
+- Sự khác nhau giữa Eloquent ORM và Query Builder
+- Eloquent ORM là một cách tiếp cận hướng đối tượng để tương tác với cơ sở dữ liệu, trong khi Query Builder là một cách tiếp cận hướng thủ tục.
+- Ví dụ như trên, khi dùng Eloquent ORM, code sẽ chạy vào accessor và mutator của model, trong khi Query Builder sẽ không chạy vào accessor và mutator.
+- Ưu điểm, nhược điểm của từng cách tiếp cận:
+  - Eloquent ORM:
+    - Ưu điểm: Dễ đọc, dễ bảo trì, hỗ trợ các tính năng như accessor, mutator, và quan hệ giữa các model.
+    - Nhược điểm: Hiệu suất có thể thấp hơn so với Query Builder trong một số trường hợp.
+  - Query Builder:
+    - Ưu điểm: Hiệu suất cao hơn trong một số trường hợp, linh hoạt hơn trong việc xây dựng truy vấn phức tạp.
+    - Nhược điểm: Mã khó đọc hơn, không hỗ trợ các tính năng của Eloquent như accessor và mutator.
+- Tuy nhiên Eloquent ORM vẫn có thể gọi Query Builder để thực hiện các truy vấn phức tạp hơn nếu cần thiết.
+- Ví dụ: 
+        // Eloquent ORM user query builder
+        User::where('id', $user->id)
+            ->update(['username' => $request->name]);
+
+-------------------------Tiếp theo về Eager Loading--------------------------
+- Eager Loading là một kỹ thuật trong Eloquent ORM để giảm số lượng truy vấn đến cơ sở dữ liệu khi lấy dữ liệu liên quan.
+- Ví dụ khi tôi thực hiện truy vấn như thế này: 
+    @foreach ($users as $index => $user)
+        <tr>
+            <th class="text-gray-900 dark:text-gray-100 text-center" scope="row">{{ ++$index }}</th>
+            <td class="text-gray-900 dark:text-gray-100 text-center">{{ $user->fullname }}</td>
+            <td class="text-gray-900 dark:text-gray-100 text-center">{{ $user->username }}</td>
+            <td class="text-gray-900 dark:text-gray-100 text-center">
+                @foreach ($user->tasks as $task)
+                    {{ $task->name }}
+                @endforeach
+            </td>
+- Khi đó sẽ bị lỗi n+1 query, vì mỗi lần lặp qua $user->tasks sẽ thực hiện một truy vấn riêng để lấy các task của user đó.
+- Mặc định truy vấn trong Eloquent ORM là Lazy Loading, tức là chỉ lấy dữ liệu của model chính và không lấy dữ liệu liên quan.
+- Để khắc phục lỗi này, tôi có thể sử dụng Eager Loading để lấy tất cả dữ liệu liên quan trong một truy vấn duy nhất.
+public function index()
+    {
+        return view('users.index', [
+            'users' => User::with('tasks')->get(),
+        ]);
+    }
+- Khi đó, Eloquent ORM sẽ thực hiện một truy vấn để lấy tất cả người dùng và một truy vấn khác để lấy tất cả các task liên quan đến những người dùng đó, giúp giảm số lượng truy vấn xuống chỉ còn 2.
+- Còn 1 loại là Lazy Eager Loading
+- Ví dụ: 
+// Lazy Eager Loading
+        // return view('users.index', [
+        //     'users' => User::all()->load('tasks'),
+        // ]);
+- Sự khác nhau giữa Eager Loading và Lazy Eager Loading:
+  - Eager Loading: Tải dữ liệu liên quan ngay khi truy vấn chính được thực hiện, giúp giảm số lượng truy vấn.
+  - Lazy Eager Loading: Tải dữ liệu liên quan sau khi truy vấn chính đã được thực hiện, nhưng vẫn trong cùng một truy vấn, giúp tiết kiệm bộ nhớ hơn so với việc tải từng phần riêng lẻ.
+
+===============================================Quiz===========================================
+1. Cách hoạt động của Eloquent ORM và Query Builder
+2. Nêu ưu/nhược điểm của chúng
+3. Khi nào nên dùng QB hoặc EO?
+
+1. Phân biệt Lazy loading và Eager loading.
+2. Phân biệt giữa with() và load().

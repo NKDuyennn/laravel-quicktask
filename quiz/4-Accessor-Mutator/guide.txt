@@ -1,0 +1,35 @@
+=======================Accessors & Mutators========================
+https://laravel.com/docs/12.x/eloquent-mutators#accessors-and-mutators
+Hiểu đơn giản là getter và setter dùng để format dữ liệu khi lấy ra và đưa vào
+
+-----------------------Cách setup----------------------------------
+- Trong models User thêm function fullName kiểu Attribute (đây là kiểu định nghĩa getter setter )
+- Một attribute mẫu cho accessors 
+protected function fullName(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => $this->attributes['first_name'] . ' ' . $this->attributes['last_name'],
+        );
+    }
+- Test trong tinker
+User::find(1)->fullname
+User::find(1)->fullName
+User::find(1)->full_name
+
+- Một attribute mẫu cho mutators 
+protected function username(): Attribute
+    {
+        return Attribute::make(
+            set: fn ($value) => Str::slug($value),
+        );
+    }
+- Test trong tinker
+$u = User::find(1)
+$u->username = 'test user'
+$u->username;
+$u->save();
+- Giải Thích tại sao khi $u->username = 'test user' trả về  'test user', chạy tiếp $u->username; thì trả về chuỗi slug, còn chạy save() thì mới lưu vào database
+
+-----------------------------Quiz---------------------------------------
+1. Accessors/Mutators dùng để làm gì?
+2. Tạo Accessors/Mutators như thế nào?
