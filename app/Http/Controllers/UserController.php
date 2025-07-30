@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash; 
 use Illuminate\Validation\Rules;
 use Exception;
@@ -17,6 +18,10 @@ class UserController extends Controller
      */
     public function index()
     {
+
+        // Sử dụng Gate thay vì middleware
+        Gate::authorize('admin-access');
+
         // // Lazy Loading 
         // // select * from users
         // // select * from tasks where user_id = 1
@@ -44,6 +49,9 @@ class UserController extends Controller
      */
     public function create()
     {
+        // Sử dụng Gate để kiểm tra quyền truy cập
+        Gate::authorize('admin-access');
+
         // Eloquent ORM
         return view('users.create');
     }
@@ -53,6 +61,9 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
+        // Sử dụng Gate để kiểm tra quyền truy cập
+        Gate::authorize('admin-access');
+
         $request->validate([
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
@@ -80,7 +91,9 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        //
+        // Sử dụng Policy để kiểm tra quyền truy cập
+        $this->authorize('view', $user);
+
         return view('users.show', compact('user'));
     }
 
@@ -89,7 +102,9 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        //
+        // Sử dụng Policy để kiểm tra quyền truy cập
+        $this->authorize('update', $user);
+
         return view('users.edit', compact('user'));
     }
 
@@ -98,6 +113,9 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
+        // Sử dụng Policy để kiểm tra quyền truy cập
+        $this->authorize('update', $user);
+
         // Eloquent ORM 
         $user->username = $request->name;
         $user->save();
@@ -126,6 +144,9 @@ class UserController extends Controller
     */
     public function destroy(User $user)
     {
+        // Sử dụng Gate để kiểm tra quyền truy cập
+        Gate::authorize('admin-access');
+        
         try {
             DB::transaction(function () use ($user) {
                 // Xoa task cua user
